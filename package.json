@@ -1,0 +1,11 @@
+{
+  "name": "snapper",
+  "version": "0.0.0",
+  "description": "Take photos of a page as it loads",
+  "main": "snapper.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Boris Cherny <bcherny@turn.com>",
+  "license": "Apache2"
+}
