@@ -1,0 +1,10 @@
+{
+	"folder": "snaps",
+	"interval": 100,
+	"viewport": {
+		"left": 0,
+		"top": 0,
+		"height": 768,
+		"width": 1280
+	}
+}
