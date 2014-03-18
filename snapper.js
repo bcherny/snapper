@@ -12,7 +12,8 @@ phantom.create(function (ph) {
 
 		var n = 0
 		  , interval
-		  , path = ['.', options.folder, url.slice(url.lastIndexOf('/'))].join('/')
+		  , path = ['.', options.folder, url.slice(url.lastIndexOf('/') + 1)].join('/')
+		  , snaps = {}
 		  ;
 
 		page.set('onLoadStarted', function() {
@@ -23,11 +24,11 @@ phantom.create(function (ph) {
 				  , file = path + '/' + time + '.png'
 				  ;
 
-				page.render(file, function (file) {
+				page.renderBase64('png', function (data64) {
 
-					console.log('rendered ' + file + '!');
+					snaps[file] = data64;
 
-				}.bind(null, file));
+				});
 
 				console.log('snapping at ' + time + 'ms -> ' + file);
 
@@ -39,7 +40,23 @@ phantom.create(function (ph) {
 
 		// open page
 		page.open(url, function (status) {
-			setTimeout(clearInterval.bind(null, interval), options.interval);
+
+			// stop snapping
+			clearInterval(interval);
+
+			// save snaps to disk
+			setTimeout(Object.keys(snaps).forEach(function (file) {
+
+				fs.writeFile(file, new Buffer(snaps[file], 'base64'), function (err) {
+
+					if (err) { throw new error (err); }
+					
+					else { console.log('saved ' + file); }
+
+				});
+
+			}), options.interval);
+
 			ph.exit();
 		});
 
