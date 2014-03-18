@@ -21,10 +21,10 @@ phantom.create(function (ph) {
 			interval = setInterval(function() {
 
 				var time = options.interval * n
-				  , file = path + '/' + time + '.png'
+				  , file = path + '/' + time + '.pdf'
 				  ;
 
-				page.renderBase64('png', function (data64) {
+				page.renderBase(file, function (data64) {
 
 					snaps[file] = data64;
 
@@ -45,17 +45,17 @@ phantom.create(function (ph) {
 			clearInterval(interval);
 
 			// save snaps to disk
-			setTimeout(Object.keys(snaps).forEach(function (file) {
+			// setTimeout(Object.keys(snaps).forEach(function (file) {
 
-				fs.writeFile(file, new Buffer(snaps[file], 'base64'), function (err) {
+			// 	fs.writeFile(file, new Buffer(snaps[file], 'base64'), function (err) {
 
-					if (err) { throw new error (err); }
-					
-					else { console.log('saved ' + file); }
+			// 		if (err) { throw new error (err); }
 
-				});
+			// 		else { console.log('saved ' + file); }
 
-			}), options.interval);
+			// 	});
+
+			// }), options.interval);
 
 			ph.exit();
 		});
