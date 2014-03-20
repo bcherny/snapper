@@ -1,5 +1,6 @@
 {
 	"folder": "snaps",
+	"format": "png",
 	"interval": 200,
 	"viewport": {
 		"left": 0,
