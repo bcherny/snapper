@@ -1,13 +1,17 @@
 #!/usr/bin/env node
 
 var fs = require('fs')
-  , phantom = require('phantom')
+  , webdriver = require('selenium-webdriver')
   , options = JSON.parse(fs.readFileSync('./config.json'))
   , url = process.argv[2]
+  , driver = new webdriver.Builder()
+				 .withCapabilities(webdriver.Capabilities.chrome())
+				 .build()
+  , shots = {}
   ;
 
-phantom.create(function (ph) {
-	ph.createPage(function (page) {
+// phantom.create(function (ph) {
+// 	ph.createPage(function (page) {
 
 		var n = 0
 		  , interval
@@ -15,7 +19,7 @@ phantom.create(function (ph) {
 		  , snaps = {}
 		  ;
 
-		page.set('onLoadStarted', function() {
+		//page.set('onLoadStarted', function() {
 
 			interval = setInterval(function() {
 
@@ -23,7 +27,11 @@ phantom.create(function (ph) {
 				  , file = path + '/' + time + '.' + options.format
 				  ;
 
-				page.render(file, function () {
+				screenshot(driver, file, function (err) {
+
+					if (err) {
+						throw err;
+					}
 
 					console.log('snapping at ' + time + 'ms -> ' + file);
 
@@ -31,18 +39,43 @@ phantom.create(function (ph) {
 
 				++n;
 
+				console.log('state=' + driver.executeScript('return document.readyState'))
+
+				driver.executeScript('return document.readyState').then(function (val){
+					if (val === 'complete') {
+						clearInterval(interval);
+						driver.quit();
+
+						for (var shot in shots) {
+							fs.writeFile(shot, shots[shot].replace(/^data:image\/png;base64,/,''), 'base64', function (err) {
+								if (cb) {
+									cb(err);
+								}
+							});
+						}
+					}
+				});
+
 			}, options.interval);
 
-		});
+		//});
 
 		// open page
-		page.open(url, setTimeout(function (status) {
+		driver.get(url);
 
-			// stop snapping
-			clearInterval(interval);
+		// page.open(url, setTimeout(function (status) {
 
-			ph.exit();
-		}, 2000));
+		// 	// stop snapping
+		// 	clearInterval(interval);
 
+		// 	ph.exit();
+		// }, 2000));
+
+// 	});
+// });
+
+function screenshot (driver, filename, cb) {
+	return driver.takeScreenshot().then(function (data) {
+		shots[filename] = data;
 	});
-});
+}

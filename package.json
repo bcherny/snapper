@@ -10,6 +10,8 @@
   "license": "Apache2",
   "dependencies": {
     "phantomjs": "~1.9.7-1",
-    "phantom": "~0.5.4"
+    "phantom": "~0.5.4",
+    "selenium-webdriver": "~2.41.0",
+    "chromedriver": "~2.9.0"
   }
 }
